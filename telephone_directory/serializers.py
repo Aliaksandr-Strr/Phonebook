@@ -1,9 +1,11 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
+
 from .models import Contact, Person
 
 
 class ContactSerializer(serializers.Serializer):
-    phone = serializers.CharField()
+    phone = serializers.CharField(validators=[UniqueValidator(queryset=Contact.objects.all())])
     contact_type = serializers.CharField(max_length=50)
     person_id = serializers.IntegerField()
     person = serializers.StringRelatedField()
@@ -21,7 +23,7 @@ class ContactSerializer(serializers.Serializer):
 
 
 class PersonSerializer(serializers.Serializer):
-    person = serializers.CharField(max_length=150)
+    person = serializers.CharField(max_length=150, validators=[UniqueValidator(queryset=Person.objects.all())])
 
     def create(self, validated_data):
         return Person.objects.create(**validated_data)
